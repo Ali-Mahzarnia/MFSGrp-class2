@@ -1,0 +1,25 @@
+language: r
+r:
+  - release
+  - devel
+sudo: false
+cache: packages
+r_packages:
+  - knitr
+  - devtools
+  - methods
+  - Rcpp
+  - RcppArmadillo
+  - fda
+  - Matrix 
+  - pbmcapply
+
+r_github_packages:
+  Ali-Mahzarnia/fGMD
+
+warnings_are_errors: false
+
+notifications:
+  email:
+    - amahzarn@uncc.edu
+© 2021 GitHub, Inc.
