@@ -75,7 +75,7 @@ MFSGrp =function(Ytrain,Xtrain, basisno=5 ,tt, lambda=NULL, alpha=NULL ,
                 predloss="L2", eps = 1e-08, maxit = 3e+08, nlambda=100, forcezero=FALSE, 
                 forcezeropar=0.001, sixplotnum=1, lambdaderivative=NULL,
                 nfolder=5, nalpha=9, nlamder=10, lamdermin=1e-9, lamdermax=1e-3,alphamin=0 ,alphamax=1,
-                a=3.7, ADMM=FALSE,numcores=NULL, rho=1 ){
+                a=3.7, ADMM=FALSE,numcores=NULL, rho=1 , unbalanced=FALSE){
   
   
   loss="ls";
@@ -83,9 +83,18 @@ MFSGrp =function(Ytrain,Xtrain, basisno=5 ,tt, lambda=NULL, alpha=NULL ,
 #######if( ) stop("orthaganlization must be one (orth=T) if ")
     if(bspline==T) {fpca=T} else {fpca=F}
   #Y=Ytrain;X=Xtrain;basisno=m; mm =m ;tt=tt; part=part; lambda=0.6;Xpred=Xtest;Ypred=Ytest; Silence=TRUE; fpca=T; bspline=T;  Penalty="glasso"; rho=1; lambdaderivative =NULL;alpha=0.5
+  if (unbalanced==FALSE){
   p=dim(X)[1] #how many curves
-  n=dim(X)[2] # how many random sample of each curve
-  nt=dim(X)[3] # number of grid points observed for each of n observed curve
+  n=dim(X)[2] #how many random sample of each curve
+  nt=dim(X)[3]} #number of grid points observed for each of n observed curve
+  
+  if (unbalanced==TRUE) {# X is a list
+    p=length(lengths(X)); 
+    n=dim(X[[1]])[1];
+    nt=rep(0,p);
+    for (j in 1:p) nt[j]=dim(X[[j]])[2]
+  }
+  
   K=length(part)# number of blocks
   m=basisno # number of baisis
   # next line allow user to use bspline instead of foriur bases if they chose bspline=true
@@ -95,12 +104,14 @@ MFSGrp =function(Ytrain,Xtrain, basisno=5 ,tt, lambda=NULL, alpha=NULL ,
   if (bspline==TRUE){Gram=fda::bsplinepen(B.basis, 0)} else{Gram=fda::fourierpen(B.basis, 0)}
   # transforming  to coordinate representation wrt bases:
   oldGram=Gram
+  #stop("here")
   #### if  fpca
   #lambdader=0
   if (fpca==TRUE){
     T= array(NaN, c(m,m,p));
     Xcoeforig=matrix(NaN, n,m*p);
     Xcoef=matrix(NaN, n,m*p);
+    if (unbalanced==FALSE){
     for (j in 1:p){
       XX=get.fd(t(X[j,,]),tt, basis = B.basis)
       Xcoeforig[,((j-1)*m+1): (j*m)]=t(XX$coef)
@@ -109,23 +120,44 @@ MFSGrp =function(Ytrain,Xtrain, basisno=5 ,tt, lambda=NULL, alpha=NULL ,
       Xcoef[,((j-1)*m+1): (j*m)]= t(T[,,j]%*%t(Xcoeforig[,((j-1)*m+1): (j*m)]))
       #print(XX$lambdamin)
       #lambdader=max(lambdader,XX$lambdamin)
-      
-    }
+    }}
+    if (unbalanced==TRUE){ # X and tt are lists now
+      for (j in 1:p){
+        XX=get.fd(t(X[[j]]),tt[[j]], basis = B.basis)
+        Xcoeforig[,((j-1)*m+1): (j*m)]=t(XX$coef)
+        Xpca=fda::pca.fd( fda::fd(XX$coef, XX$basis)   , nharm=m)
+        T[,,j]=  t(Xpca$harmonics$coefs)%*%Gram
+        Xcoef[,((j-1)*m+1): (j*m)]= t(T[,,j]%*%t(Xcoeforig[,((j-1)*m+1): (j*m)]))
+        #print(XX$lambdamin)
+        #lambdader=max(lambdader,XX$lambdamin)
+      }}
+    
+    
     Gram=diag(m)
   } else {
     Xcoef=matrix(NaN, n,m*p);
+    
+    if (unbalanced==FALSE){ 
     for (j in 1:p){
       XX=get.fd(aperm(X[j,,]),tt, basis = B.basis)
       Xcoef[,((j-1)*m+1): (j*m)]=t(XX$coef)
       #lambdader=max(lambdader,XX$lambdamin)
-    }
+    }}
+    if (unbalanced==TRUE){ 
+      for (j in 1:p){
+        XX=get.fd(aperm(X[[j]]),tt[[j]], basis = B.basis)
+        Xcoef[,((j-1)*m+1): (j*m)]=t(XX$coef)
+        #lambdader=max(lambdader,XX$lambdamin)
+      }}
+    
+    
   }
 
 
 
     lambdader=lambdaderivative; 
 
-    
+   
 
 
   ######
@@ -548,16 +580,30 @@ else{
     Gram=oldGram
     #gram diag block
     #if (dim(Xpred)[2]!=length(Ypred)) {print("error dim test")}
+    if (unbalanced==FALSE){
     ptest=dim(Xpred)[1]
     ntest=dim(Xpred)[2]
     nttest=dim(Xpred)[3]
     GG=Matrix::bdiag(replicate(ptest, Gram , simplify = FALSE))%*%diag(m*p)
     GG=as.matrix(GG)
-    
     Xcoeftest=matrix(NaN, ntest,m*ptest);
     for (j in 1:p){
       XX=get.fd(t(Xpred[j,,]),tt, basis = B.basis)
       Xcoeftest[,((j-1)*m+1): (j*m)]=t(XX$coef)
+    }
+    }
+    
+    if (unbalanced==TRUE){
+      ptest=length(lengths(Xpred))
+      ntest=dim(Xpred[[1]])[1]
+      nttest=rep(0,p); for (j in 1:p) nttest[j]=dim(Xpred[[j]])[2]
+      GG=Matrix::bdiag(replicate(ptest, Gram , simplify = FALSE))%*%diag(m*p)
+      GG=as.matrix(GG)
+      Xcoeftest=matrix(NaN, ntest,m*ptest);
+      for (j in 1:p){
+        XX=get.fd(t(Xpred[[j]]),tt[[j]], basis = B.basis)
+        Xcoeftest[,((j-1)*m+1): (j*m)]=t(XX$coef)
+      }
     }
     
     
