@@ -398,7 +398,7 @@ else{
         #pbmcapply::pbmclapply
         #parallel::mclapply
         #cat("\r The ", j, "th of the ", nlamder  ," lamdaders " )
-        mse=pbmcapply::pbmclapply(lam,function(lambdas){foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=tt, lambda=lambdas, 
+        mse=pbmcapply::pbmclapply(lam,function(lambdas){foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=0, lambda=lambdas, 
                                                    alpha=alp , part=part, rho=rho , 
                                                    Penalty=Penalty, GG=GG, lambdader =lambdaders[j], 
                                                    GGder=GGder,K=K, Gram=Gram,oldGram=oldGram,n=n,p=p,m=m,
@@ -446,7 +446,7 @@ else{
       #parallel::mclapply
       #cat("\r The ", j, "th of the ", nalpha  ," alphas " )
       
-      mse=pbmcapply::pbmclapply(lam,function(lambdas){foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=tt, lambda=lambdas, 
+      mse=pbmcapply::pbmclapply(lam,function(lambdas){foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=0, lambda=lambdas, 
                                                  alpha=alphas[j] , part=part, rho=rho , 
                                                  Penalty=Penalty, GG=GG, lambdader =lambdader, 
                                                  GGder=GGder,K=K, Gram=Gram,oldGram=oldGram,n=n,p=p,m=m,
@@ -495,7 +495,7 @@ else{
       lambdas=exp(seq(log(lambdafactor*maximlam), log(maximlam), length.out=nlambda))/length(Y)} 
     else{lambdas=lambda}
     #print(lambdas)
-    mse=pbmcapply::pbmclapply(lambdas,function(lambd){foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=tt, lambda=lambd, 
+    mse=pbmcapply::pbmclapply(lambdas,function(lambd){foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=0, lambda=lambd, 
                                                    alpha=alpha , part=part, rho=rho , 
                                                    Penalty=Penalty, GG=GG, lambdader =lambdader, 
                                                    GGder=GGder,K=K, Gram=Gram,oldGram=oldGram,n=n,p=p,m=m,
@@ -512,7 +512,7 @@ else{
   #print(lambda)
   
   
-  final=foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=tt, lambda=lambda, 
+  final=foldcpp(Y=Y,X=Xcoef, basisno=basisno ,tt=0, lambda=lambda, 
                 alpha=alpha , part=part, rho=rho , 
                 Penalty=Penalty, GG=GG, lambdader =lambdader, 
                 GGder=GGder,K=K, Gram=Gram,oldGram=oldGram,n=n,p=p,m=m,
