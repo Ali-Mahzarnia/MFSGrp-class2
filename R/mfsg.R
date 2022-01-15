@@ -565,7 +565,7 @@ else{
         a=paste0("b",j+1)
       if( exists(a) ) {
         if ( unbalanced==FALSE){lines(y= eval(parse(text=a)),x=(1:(5*nt))*1/(5*nt), col="green")}
-        if ( unbalanced==TRUE){lines(y= eval(parse(text=a)),x=(1:(5*nt[j]))*1/(5*nt[j]), col="green")}
+        if ( unbalanced==TRUE){lines(y= eval(parse(text=a)),x=(1:(5*nt[j+1]))*1/(5*nt[j+1]), col="green")}
         
         }
       }
