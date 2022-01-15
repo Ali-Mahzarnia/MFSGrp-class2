@@ -563,7 +563,11 @@ else{
         i=i+1; if(p>3 & ceiling(i/6)>sixplotnum) {break;}
         fbeta=fda::fd(beta, B.basis);plot(fbeta, xlab = paste0(" Time. This is the plot of the Coef. ",j+1));   
         a=paste0("b",j+1)
-      if( exists(a) ) {lines(y= eval(parse(text=a)),x=(1:(5*nt))*1/(5*nt), col="green")}
+      if( exists(a) ) {
+        if ( unbalanced==FALSE){lines(y= eval(parse(text=a)),x=(1:(5*nt))*1/(5*nt), col="green")}
+        if ( unbalanced==TRUE){lines(y= eval(parse(text=a)),x=(1:(5*nt[j]))*1/(5*nt[j]), col="green")}
+        
+        }
       }
       
       if( p>3 & j>(p-4) & i<6){i=i+1;if(ceiling(i/6)>sixplotnum) {break;} ; fbeta=fda::fd(beta, B.basis);plot(fbeta, xlab = paste0(" Time. This is the plot of the Coef. ",j+1));}
