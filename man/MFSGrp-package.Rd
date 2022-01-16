@@ -315,9 +315,9 @@ Xb2=matrix(0, ncol=n, nrow=1)
 Xb3=matrix(0, ncol=n, nrow=1)
 
 for(j in 1:n){
-  Xb1[j]=(X[[1]][j,] %*%b1)/nt[1]
-  Xb2[j]=(X[[2]][j,]%*%b2)/nt[2]
-  Xb3[j]=(X[[3]][j,]%*%b3)/nt[3]
+  Xb1[j]=(X[[1]][j,] \%*\%b1)/nt[1]
+  Xb2[j]=(X[[2]][j,]\%*\%b2)/nt[2]
+  Xb3[j]=(X[[3]][j,]\%*\%b3)/nt[3]
 }
 # construct Y
 Y=matrix(0, ncol=n, nrow=1)
@@ -370,10 +370,6 @@ for(j in 1:9){
   for(k in 2:10)lines(tt[[j]], Xtrain[[j]][k,])
 }
 par(mfrow=c(1,1))
-
-#install.packages("https://github.com/Ali-Mahzarnia/fGMD/archive/master.tar.gz", repos = NULL, type="source")
-#install.packages(c("Rcpp", "fda", "pbmcapply", "RcppArmadillo"))
-#install.packages("https://github.com/Ali-Mahzarnia/222/archive/refs/heads/main.tar.gz",  repos = NULL, type="source")
 
 # load the library 
 library(MFSGrp) 
