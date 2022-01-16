@@ -43,7 +43,8 @@ MFSGrp(
   a=3.7, 
   ADMM=FALSE,
   numcores=NULL,
-  rho=1
+  rho=1,
+  unbalanced=FALSE
   )
 }
 \arguments{
@@ -88,6 +89,8 @@ If both \code{alpha} and \code{lambdaderivative} need cross-validations, first t
 }
 
 \item{ADMM}{by default is \code{FALSE}. If \code{TRUE} the algorithm is the Alternating Direction Method of Multiplier. This algorithm runs parallel on Linux, but it runs serial on Windows. It is recommended only on a system equipped with many strong cores. The number of cores to be used is \code{numcores}.  If \code{TRUE}, by leaving \code{numcores} unspecified, the program assigns and uses the maximum number of possible cores on the system. If the input \code{numcores} is greater than the maximum number of available cores, the maximum number of possible cores on the system will be assigned as \code{numcores}. The augmented parameter (the step size) is \code{rho}, which is by default \eqn{1}. See the reference below for more information. }
+
+\item{unbalanced}{by default is \code{FALSE}. If \code{TRUE}, the number of observed time points are different from one functional covariate to another. In this case, \code{Xtrain}, \code{Xtest} and \code{tt} must be lists of \eqn{p}. Each elemnt of \code{Xtrain} and  \code{Xtest} must be a matrix of  \eqn{n \times  nt[j]}{n*nt[j]} for \eqn{ j \in 1,...,p}, and each element of \code{tt} must be a vector of  the size \eqn{nt[j]} that includes grid points within 0 to 1-\eqn{nt} is a vector of sizes of observed time points for the \eqn{p} functional covariates. See the example below.}
 }
 \value{
 \item{coef}{vector of size \code{basisno}\eqn{*p}. The coefficients of the \eqn{p} estimated functional curves based on \code{basisno} bases.}
@@ -264,6 +267,200 @@ results$lambda # the regularized lambda
 
 # remove the population curves before data application
 remove(b5,b8,b11)
+
+
+#Unbalanced time points:
+# We'd generate functional data that are observed at a different number of time points.
+#For example, the first covariate is observed at  91 time points (or 91*5) and the second at 112 (or 112*5) 
+
+
+p=19 # number of functional predictors for each observation
+n=300 # sample size
+set.seed(123)#set seed for consistency in the next step on different random number of observations
+nt=5*sample(80:120, p, replace=T)  # vector of number of recorded *5 and later we pick 1 of each 5
+#time points for each functional covariate that are different 
+#and here are chosen randmoly
+X=vector("list",p) # X is a list of p, each item is a mtrix of n*nt(j): X[[1]],...X[[p]]
+#(p, n, nt)
+for(j in 1:p){# first make matrices of n*nt(j) for each X[j] : j=1,...,p
+  X[[j]]=matrix(0, n, nt[j]);
+} 
+
+for(j in 1:p){# Brownian motion
+  for (i in 1:n){
+    X[[j]][i,]=as.numeric(cumsum(rnorm(nt[j],0,1))) }
+}
+
+
+
+# true nonzero coefs: beta_5, beta_8, beta_11, and the rest are zeros
+# beta_1(t)=sin(3*pi*t), beta_2(t)=sin(5*pi*t/2) and beta_3(t)=t^2
+beta1 = function(t){return(sin(3*pi*t/2))}
+beta2 = function(t){return(sin(5*pi*t/2))}
+beta3=function(t){return(t^2)}
+b1=matrix(0, ncol=1, nrow=nt[1])
+b2=matrix(0, ncol=1, nrow=nt[2])
+b3=matrix(0, ncol=1, nrow=nt[3])
+
+# evaluate population betas on (0,1)  grids
+for (d in 1:3) {
+  temp=get(paste0("b", d, sep=""))
+  for(k in 1:nt[d]){
+    temp[k]=get(paste("beta", d, sep=""))(k/nt[d]);}
+  assign((paste0("b", d, sep="")),temp )
+}
+# evaluate the inner products of Xs and beta 5 and 8 and 11 via Reiman sum
+Xb1=matrix(0, ncol=n, nrow=1)
+Xb2=matrix(0, ncol=n, nrow=1)
+Xb3=matrix(0, ncol=n, nrow=1)
+
+for(j in 1:n){
+  Xb1[j]=(X[[1]][j,] %*%b1)/nt[1]
+  Xb2[j]=(X[[2]][j,]%*%b2)/nt[2]
+  Xb3[j]=(X[[3]][j,]%*%b3)/nt[3]
+}
+# construct Y
+Y=matrix(0, ncol=n, nrow=1)
+# standard deviation of the noise term
+sd=0.05
+# noise term 
+eps=matrix(0, ncol=n, nrow=1)
+for(n in 1:n){
+  eps[, n]=rnorm(1,0,sd)
+}
+Y=Xb1+Xb2+Xb3+eps
+# the algorithm takes care of the intercept in the prediction
+Y=Y+3; #intercept
+
+
+# make the design matrix (pick every 5 elements), here nt[j] becomes nt[j]/5
+X.obs=vector("list",p);
+for (j in 1:p) { 
+  X.obs[[j]]=X[[j]][,seq(5, nt[j], 5), drop=FALSE]; 
+  nt[j]=dim(X.obs[[j]])[2]
+}
+#X.obs = X[,,(1:100)*nt/100, drop=FALSE]
+#X.obs=X
+# observed times scaled to (0,1)
+tt=vector("list",p);
+for (j in 1:p) {
+  tt[[j]]= (1:nt[j])/nt[j]
+}
+
+
+# test and train sets (half, half)
+trainIndex=sample(1:n, size = round(0.5*n), replace=FALSE)
+Ytrain=Y[, trainIndex, drop = FALSE ]
+Ytest=Y[, -trainIndex, drop = FALSE ]
+Xtrain=vector("list",p); Xtest=vector("list",p);
+for (j in 1:p) {
+  Xtrain[[j]]=X.obs[[j]][trainIndex,, drop=FALSE]
+  Xtest[[j]]=X.obs[[j]][-trainIndex,, drop=FALSE]
+  
+}
+
+# The model:
+# total 3 functional predictors
+# beta_1(t), beta_2(t), beta_3(t) are nonzero, and the others are zero
+
+# plot X^1, ..., X^9   (out of total p=35)
+par(mfrow=c(3,3))
+for(j in 1:9){
+  plot(tt[[j]],Xtrain[[j]][1,],type='l', ylim=c(-30,30), main=paste0("j=",j))
+  for(k in 2:10)lines(tt[[j]], Xtrain[[j]][k,])
+}
+par(mfrow=c(1,1))
+
+#install.packages("https://github.com/Ali-Mahzarnia/fGMD/archive/master.tar.gz", repos = NULL, type="source")
+#install.packages(c("Rcpp", "fda", "pbmcapply", "RcppArmadillo"))
+#install.packages("https://github.com/Ali-Mahzarnia/222/archive/refs/heads/main.tar.gz",  repos = NULL, type="source")
+
+# load the library 
+library(MFSGrp) 
+
+# run
+m=17 #basisino
+part=rep(m,p) # partition
+
+
+
+# green: true beta  (only beta5, beta8, beta11 are the nonzero functions)
+# black: estimated betas
+
+# lasso 
+# in order to see all figures after the run, use the "previous plot" arrow on Rstudio
+results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
+               Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
+               lamdermax=1e-3, lamdermin = 1e-5, unbalanced=TRUE)
+sqrt(results$MSEpredict)  # test Root MSE
+sum(results$coef==0)/m    # number of zero functional coefficients
+results$lambda # the regularized lambda
+
+
+# lasso with forcezero 
+results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
+               Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
+               lamdermax=1e-3, lamdermin = 1e-5, 
+               forcezero=TRUE, unbalanced=TRUE)
+sqrt(results$MSEpredict)  # test Root MSE
+sum(results$coef==0)/m    # number of zero functional coefficients
+
+# elastic net with different settings
+results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,Ypred=Ytest, 
+               Penalty = "gelast" , bspline=FALSE, nlamder=15, nalpha=11, 
+               nfolder=4,unbalanced=TRUE )
+sum(results$coef==0)/m # number of zero functional coefficients
+sqrt(results$MSEpredict) # test Root MSE
+
+
+# oracle
+# as explained in the manual, because of C++, this regression is faster with ADMM, even on Windows 
+
+active=c(1,2,3) # the active set: set of indices of the three nonzero coefficients
+results=MFSGrp(Y=Ytrain,X=Xtrain[active],basisno=m,tt, part=part,Xpred
+               =Xtest[active],Ypred=Ytest, Penalty ="OLS", bspline = TRUE, 
+               sixplotnum = "max" ,lambdaderivative = NULL, lamdermax = 1e-3,
+               lamdermin=1e-5, nfolder=10, ADMM=TRUE,unbalanced=TRUE)
+sqrt(results$MSEpredict)  # test Root MSE
+
+
+# regression with no shrinkage or sparse penalty, only with second derivative penalty
+results=MFSGrp(Ytrain,X=Xtrain,basisno=m,tt, part=part,Xpred=Xtest,Ypred=Ytest, 
+               Penalty ="OLS", bspline = TRUE, 
+               sixplotnum = 3, ADMM=TRUE,unbalanced=TRUE)
+sqrt(results$MSEpredict) # test Root MSE
+sum(results$coef==0)/m  # number of zero functional coefficients (naturally zero)
+
+
+#  regression with no penalty
+results=MFSGrp(Ytrain,X=Xtrain,basisno=m,tt, part=part,Xpred=Xtest,Ypred=Ytest, 
+               Penalty ="OLS", bspline = TRUE, 
+               sixplotnum = 2, lambdaderivative=0, unbalanced=TRUE)
+sqrt(results$MSEpredict) # test Root MSE
+sum(results$coef==0)/m # number of zero functional coefficients (naturally zero)
+
+
+# a penelized example with ADMM
+results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
+               Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
+               lamdermax=1e-3, lamdermin = 1e-5, ADMM=TRUE, unbalanced=TRUE)
+sqrt(results$MSEpredict)  # test Root MSE
+sum(results$coef==0)/m    # number of zero functional coefficients.
+results$lambda # the regularized lambda
+
+# a penelized example with ADMM and a different rho
+results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
+               Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
+               lamdermax=1e-3, lamdermin = 1e-5, ADMM=TRUE, rho=0.5)
+sqrt(results$MSEpredict)  # test Root MSE
+sum(results$coef==0)/m    # number of zero functional coefficients
+results$lambda # the regularized lambda
+
+
+# remove the population curves before data application
+remove(b1,b2,b3)
+
+
 }
 \references{
 Ali Mahzarnia, Jun Song. "Multivariate functional group sparse regression: functional predictor selection," Submitted for publication in  2021.\cr URL: \url{https://arxiv.org/abs/2107.02146}\cr
@@ -286,7 +483,7 @@ Fan, J and Li, R. (2001) "Variable Selection via Nonconcave Penalized Likelihood
 \cr URL: \url{https://github.com/Ali-Mahzarnia/fGMD}\cr
 }
 \author{
-Ali Mahzarnia and Jun Song\cr Maintainer: Ali Mahzarnia <amahzarn@uncc.edu>
+Ali Mahzarnia and Jun Song\cr Maintainer: Ali Mahzarnia <amahzarn@uncc.edu> <ali.mahzarnia@duke.edu>
 }
 
 
