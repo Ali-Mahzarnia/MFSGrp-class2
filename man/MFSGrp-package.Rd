@@ -90,7 +90,7 @@ If both \code{alpha} and \code{lambdaderivative} need cross-validations, first t
 
 \item{ADMM}{by default is \code{FALSE}. If \code{TRUE} the algorithm is the Alternating Direction Method of Multiplier. This algorithm runs parallel on Linux, but it runs serial on Windows. It is recommended only on a system equipped with many strong cores. The number of cores to be used is \code{numcores}.  If \code{TRUE}, by leaving \code{numcores} unspecified, the program assigns and uses the maximum number of possible cores on the system. If the input \code{numcores} is greater than the maximum number of available cores, the maximum number of possible cores on the system will be assigned as \code{numcores}. The augmented parameter (the step size) is \code{rho}, which is by default \eqn{1}. See the reference below for more information. }
 
-\item{unbalanced}{by default is \code{FALSE}. If \code{TRUE}, the number of observed time points are different from one functional covariate to another. In this case, \code{Xtrain}, \code{Xtest} and \code{tt} must be lists of \eqn{p}. Each elemnt of \code{Xtrain} and  \code{Xtest} must be a matrix of  \eqn{n \times  nt[j]}{n*nt[j]} for \eqn{ j \in 1,...,p}, and each element of \code{tt} must be a vector of  the size \eqn{nt[j]} that includes grid points within 0 to 1-\eqn{nt} is a vector of sizes of observed time points for the \eqn{p} functional covariates. See the example below.}
+\item{unbalanced}{by default is \code{FALSE}. If \code{TRUE}, the number of observed time points are different from one functional covariate to another. In this case, \code{Xtrain}, \code{Xtest} and \code{tt} must be lists of \eqn{p}. Each element of \code{Xtrain} and  \code{Xtest} must be a matrix of  \eqn{n \times  nt[j]}{n*nt[j]} for \eqn{j=1,...,p}, and each element of \code{tt} must be a vector of  the size \eqn{nt[j]} that includes grid points within 0 to 1. The \eqn{nt} is a vector of sizes of observed time points for the \eqn{p} functional covariates. See the example below.}
 }
 \value{
 \item{coef}{vector of size \code{basisno}\eqn{*p}. The coefficients of the \eqn{p} estimated functional curves based on \code{basisno} bases.}
@@ -269,9 +269,9 @@ results$lambda # the regularized lambda
 remove(b5,b8,b11)
 
 
-#Unbalanced time points:
+# Unbalanced time points:
 # We'd generate functional data that are observed at a different number of time points.
-#For example, the first covariate is observed at  91 time points (or 91*5) and the second at 112 (or 112*5) 
+# For example, the first covariate is observed at  91 time points (or 91*5) and the second at 112 (or 112*5) 
 
 
 p=19 # number of functional predictors for each observation
@@ -447,7 +447,7 @@ results$lambda # the regularized lambda
 # a penelized example with ADMM and a different rho
 results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
                Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
-               lamdermax=1e-3, lamdermin = 1e-5, ADMM=TRUE, rho=0.5)
+               lamdermax=1e-3, lamdermin = 1e-5, ADMM=TRUE, rho=0.5, unbalanced=TRUE)
 sqrt(results$MSEpredict)  # test Root MSE
 sum(results$coef==0)/m    # number of zero functional coefficients
 results$lambda # the regularized lambda
