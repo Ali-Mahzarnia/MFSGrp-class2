@@ -63,10 +63,17 @@ for(j in 1:p){
   for (i in 1:n){
     X[j,i,]=cumsum(rnorm(nt,0,1)) }
 }
+```
+<img src="https://render.githubusercontent.com/render/math?math=X^i_j(t)"> for <img src="https://render.githubusercontent.com/render/math?math=i=1,\cdots,n">, <img src="https://render.githubusercontent.com/render/math?math=j=1,\cdots,p">, and <img src="https://render.githubusercontent.com/render/math?math=t \in \{ t_1, \cdots, t_{nt} \}">
 
+```R 
 # true nonzero coefs: beta_5, beta_8, beta_11, and the rest are zeros
 # beta_5(t)=sin(3*pi*t), beta_8(t)=sin(5*pi*t/2) and beta_11(t)=t^2
 beta5 = function(t){return(sin(3*pi*t/2))}
+```
+<img src="https://render.githubusercontent.com/render/math?math=\beta^5(t)=\sin(\frac{5 \pi t}{2})"> for <img src="https://render.githubusercontent.com/render/math?math=t \in \[0,1 ]">.
+
+```R 
 beta8 = function(t){return(sin(5*pi*t/2))}
 beta11=function(t){return(t^2)}
 b5=matrix(0, ncol=1, nrow=nt)
@@ -91,6 +98,10 @@ for(j in 1:n){
   Xb8[j]=(X[8,j,]%*%b8)/nt
   Xb11[j]=(X[11,j,]%*%b11)/nt
 }
+``` 
+<img src="https://render.githubusercontent.com/render/math?math=< X^5_i, \beta^5 >= \sum_{k=1}^{nt} \frac{X^5_i(k) \beta^5(k)}{nt} ">
+
+```R 
 # construct Y
 Y=matrix(0, ncol=n, nrow=1)
 # standard deviation of the noise term
@@ -103,8 +114,11 @@ for(n in 1:n){
 Y=Xb5+Xb8+Xb11+eps
 # the algorithm takes care of the intercept in the prediction
 Y=Y+3; #intercept
+```
+<img src="https://render.githubusercontent.com/render/math?math=Y_i=\sum_{j=1}^p <X^j_i,\beta^j>%2B3%2B\epsilon">
 
 
+```R 
 # make the design matrix (pick every 5 elements), here nt becomes 100
 X.obs = X[,,(1:100)*nt/100, drop=FALSE]
 
@@ -145,6 +159,10 @@ part=rep(m,p) # partition
 # black: estimated betas
 
 # lasso 
+```
+<img src="https://render.githubusercontent.com/render/math?math=\arg\min_{\beta} \frac{1}{2} || Y-<X,\beta>||^2 %2B \frac{\lambda_{der}}{2} || \beta''||^2 %2B  \lambda \sum_{j} || \beta^j||">
+
+```R 
 # in order to see all figures after the run, use the "previous plot" arrow on Rstudio
 results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
            Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
@@ -191,9 +209,12 @@ for(j in 1:p){# Brownian motion
   for (i in 1:n){
     X[[j]][i,]=as.numeric(cumsum(rnorm(nt[j],0,1))) }
 }
+```
+
+<img src="https://render.githubusercontent.com/render/math?math=X^i_j(t)"> for <img src="https://render.githubusercontent.com/render/math?math=i=1,\cdots,n">, <img src="https://render.githubusercontent.com/render/math?math=j=1,\cdots,p">, and <img src="https://render.githubusercontent.com/render/math?math=t \in \{ t_1, \cdots, t_{nt(j)} \}">. Note that <img src="https://render.githubusercontent.com/render/math?math=nt(j)\}"> depends on <img src="https://render.githubusercontent.com/render/math?math=j=1, \cdots, p">, becasue the observed time points are different from one covariate to another.
 
 
-
+```R
 # true nonzero coefs: beta_1, beta_2, beta_3, and the rest are zeros
 # beta_1(t)=sin(3*pi*t), beta_2(t)=sin(5*pi*t/2) and beta_3(t)=t^2
 beta1 = function(t){return(sin(3*pi*t/2))}
