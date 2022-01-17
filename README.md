@@ -159,9 +159,12 @@ sqrt(results$MSEpredict)  # test Root MSE
 sum(results$coef==0)/m    # number of zero functional coefficients among 35
 ```
 30
-```R results$lambda # the regularized lambda
+
+```R 
+results$lambda # the regularized lambda
 ```
 0.3617951
+
 ![Figures of the nonzero funcitonal predictors ](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/a2.png) ![](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/a3.png) ![](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/b.png)
 
 # Unbalanced time points:
@@ -267,7 +270,8 @@ for(j in 1:9){
   plot(tt[[j]],Xtrain[[j]][1,],type='l', ylim=c(-30,30), main=paste0("j=",j))
   for(k in 2:10)lines(tt[[j]], Xtrain[[j]][k,])
 }
-par(mfrow=c(1,1))```
+par(mfrow=c(1,1))
+```
 
 ![Figures of the first 9 covariates](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/c.png)
 
@@ -288,7 +292,8 @@ part=rep(m,p) # partition
 # in order to see all figures after the run, use the "previous plot" arrow on Rstudio
 results=MFSGrp(Ytrain,Xtrain,basisno=m,tt, part=part,Xpred=Xtest,
                Ypred=Ytest, Penalty = "glasso" , bspline=TRUE, sixplotnum="max" , 
-               lamdermax=1e-3, lamdermin = 1e-5, unbalanced=TRUE)```
+               lamdermax=1e-3, lamdermin = 1e-5, unbalanced=TRUE)
+```
 Chosen lambdader is 0.0005994843 and Maximum Estimated Time: 5.701051  seconds            
 ```R 
 sqrt(results$MSEpredict)  # test Root MSE
