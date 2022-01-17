@@ -4,9 +4,10 @@
 6368c8c825bb5e3f5cb1e1fef66e2c58 *man/MFSGrp-package.Rd
 d1786a354feabed2e05613297398eb8f *NAMESPACE
 fe760dbc3493fdbb7966bfcb8727e748 *R/mfsg.R
-e63a91554c35b7bd5c259174abcb4bd9 *R/RcppExports.R 
+e63a91554c35b7bd5c259174abcb4bd9 *R/RcppExports.R
+a84e8236c32bedc9bc7c5ff2e71c32e0 *README.md
 56da35e0d97f64cf52fd88949ae6099b *src/auxrcpp.cpp
 61059660eb073d93e00e8ee054237071 *src/Makevars
 61059660eb073d93e00e8ee054237071 *src/Makevars.win
 69c06326b9fff3c39260b71e50ef4e64 *src/RcppExports.cpp
-
+704141a83af59c7045214e93172d6c08 *unbalanced example.R
