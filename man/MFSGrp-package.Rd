@@ -380,7 +380,7 @@ part=rep(m,p) # partition
 
 
 
-# green: true beta  (only beta5, beta8, beta11 are the nonzero functions)
+# green: true beta  (only beta1, beta2, beta3 are the nonzero functions)
 # black: estimated betas
 
 # lasso 
