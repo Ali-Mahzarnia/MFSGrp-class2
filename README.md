@@ -55,8 +55,7 @@ Ali Mahzarnia, Jun Song. "Multivariate functional group sparse regression: funct
 The package manual that can be pulled up by  ```??MFSGrp``` on the RStudio console has a thorough explanation and set of examples.
 
 
-```p=35 # number of functional predictors for each observation```
-
+```p=35 # number of functional predictors for each observation```\\
 ```n=200 # sample size```
 ```nt=500 # number of recorded time points for each functional covariate```
 ```# nt will be reduced to 100 after the inner products are computed below```
