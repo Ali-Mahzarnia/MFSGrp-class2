@@ -169,11 +169,9 @@ The package manual has multiple examples about this topic.
 
 
 
-
+```R
 # We'd generate functional data that are observed at a different number of time points.
 # For example, the first covariate is observed at  91 time points (or 91*5) and the second at 112 (or 112*5) 
-
-```R
 p=19 # number of functional predictors for each observation
 n=300 # sample size
 set.seed(123)#set seed for consistency in the next step on different random number of observations
