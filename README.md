@@ -3,6 +3,7 @@ This R package runs the Group Elastic Net (including lasso, ridge, elastic net, 
  
  
 # Installation
+It is highly recommended that the latest version of [R](https://www.r-project.org/), [Rstudio](https://www.rstudio.com/products/rstudio/download/), and [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools40.html) are installed before installing the following dependencies on R, and the instructions on their pages are followed so they are activated. Sometimes, the best way to handle errors, such as gfortran, due to outdated versions of these three programs, is to uninstall all of them, then install their latest versions in the above order. 
 ## 1-Dependencies:
 In order to have a successful installation, make sure you have all of the required dependencies installed on R. You can install these dependencies with the R commands:  
 [Rcpp (>= 1.0.6)](https://cran.r-project.org/web/packages/Rcpp/index.html) ```install.packages("Rcpp")```  
