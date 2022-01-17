@@ -56,6 +56,7 @@ The package manual that can be pulled up by  ```??MFSGrp``` on the RStudio conso
 
 
 ```p=35 # number of functional predictors for each observation```
+
 ```n=200 # sample size```
 ```nt=500 # number of recorded time points for each functional covariate```
 ```# nt will be reduced to 100 after the inner products are computed below```
