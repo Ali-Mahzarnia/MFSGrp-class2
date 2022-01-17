@@ -276,7 +276,7 @@ remove(b5,b8,b11)
 
 p=19 # number of functional predictors for each observation
 n=300 # sample size
-set.seed(123)#set seed for consistency in the next step on different random number of observations
+
 nt=5*sample(80:120, p, replace=T)  # vector of number of recorded *5 and later we pick 1 of each 5
 #time points for each functional covariate that are different 
 #and here are chosen randmoly
