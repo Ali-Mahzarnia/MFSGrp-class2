@@ -48,9 +48,6 @@ install.packages("https://github.com/Ali-Mahzarnia/MFSGrp/raw/main/MFSGrp_1.0.ta
 After installations, you can pull up the manual that includes a simulation example by the R command ```??MFSGrp```. Click on `MFSGrp::MFSGrp` under the help pages for the manual. If the manual cannot be pulled up, first try ```.rs.restartR()```, then try ```??MFSGrp```.   
 
 
-# Main reference
-Ali Mahzarnia, Jun Song. "Multivariate functional group sparse regression: functional predictor selection," Submitted for publication in 2021. [arXiv link](https://arxiv.org/abs/2107.02146)
-
 # Examples
 The package manual that can be pulled up by  ```??MFSGrp``` on the RStudio console has a thorough explanation and set of examples.
 
@@ -292,4 +289,8 @@ The package manual has multiple examples about this topic.
 ```results$lambda # the regularized lambda```
 [1] 0.4207415
 ![Figures of the nonzero funcitonal predictors ](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/c2.png) ![](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/c3.png) ![](https://github.com/Ali-Mahzarnia/222/blob/main/readme%20pics/c4.png)
+
+
+# Main reference
+Ali Mahzarnia, Jun Song. "Multivariate functional group sparse regression: functional predictor selection," Submitted for publication in 2021. [arXiv link](https://arxiv.org/abs/2107.02146)
 
