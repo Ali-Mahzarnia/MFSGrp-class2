@@ -99,7 +99,7 @@ for(j in 1:n){
   Xb11[j]=(X[11,j,]%*%b11)/nt
 }
 ``` 
-<img src="https://render.githubusercontent.com/render/math?math=< X^5_i, \beta^5 >= \sum_{k=1}^{nt} \frac{X^5_i(k) \beta^5(k)}{nt} ">
+<img src="https://render.githubusercontent.com/render/math?math=< X^5_i, \beta^5 >= \sum_{k=1}^{nt} \frac{X^5_i(t_k) \beta^5(t_k)}{nt} ">
 
 ```R 
 # construct Y
