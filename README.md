@@ -40,7 +40,7 @@ If the installation fails with the other methods, install the packages from the 
 # fGMD  
 install.packages("https://github.com/Ali-Mahzarnia/fGMD/raw/master/fGMD_1.0.tar.gz",  repos = NULL, type="source")
 # MFSGrp
-install.packages("https://github.com/Ali-Mahzarnia/MFSGrp/raw/main/MFSGrp_1.0.tar.gz",  repos = NULL, type="source")
+install.packages("https://github.com/Ali-Mahzarnia/MFSGrp-class2/raw/main/MFSGrp_1.0.tar.gz",  repos = NULL, type="source")
 ```
 
 
