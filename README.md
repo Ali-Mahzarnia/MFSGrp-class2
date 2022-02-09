@@ -18,10 +18,10 @@ You can install `fGMD` from [GitHub](https://github.com/Ali-Mahzarnia/fGMD) with
 ```R
 install.packages("https://github.com/Ali-Mahzarnia/fGMD/archive/master.tar.gz", repos = NULL, type="source")
 ```
-## 3-Install [MFSGrp](https://github.com/Ali-Mahzarnia/MFSGrp):
-You can install `MFSGrp` from [GitHub](https://github.com/Ali-Mahzarnia/MFSGrp) with the R command:
+## 3-Install [MFSGrp](https://github.com/Ali-Mahzarnia/MFSGrp-class2):
+You can install `MFSGrp` from [GitHub](https://github.com/Ali-Mahzarnia/MFSGrp-class2) with the R command:
 ```R  
-install.packages("https://github.com/Ali-Mahzarnia/MFSGrp/archive/refs/heads/main.tar.gz",  repos = NULL, type="source")
+install.packages("https://github.com/Ali-Mahzarnia/MFSGrp-class2/archive/refs/heads/main.tar.gz",  repos = NULL, type="source")
 ```
 
 
@@ -31,7 +31,7 @@ This method most likely installs the required dependencies automatically. You ca
 ``` R  
 install.packages("pacman")
 pacman::p_install_gh("Ali-Mahzarnia/fGMD")
-pacman::p_install_gh("Ali-Mahzarnia/MFSGrp")
+pacman::p_install_gh("Ali-Mahzarnia/MFSGrp-class2")
 ```
 
 ## 2-Installing from the Source files:
