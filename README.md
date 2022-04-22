@@ -336,4 +336,4 @@ results$lambda # the regularized lambda
 
 
 # Main reference
-Ali Mahzarnia, Jun Song. "Multivariate functional group sparse regression: functional predictor selection," Submitted for publication in 2021. [arXiv link](https://arxiv.org/abs/2107.02146)
+Mahzarnia A, Song J (2022) Multivariate functional group sparse regression: Functional predictor selection. PLoS ONE 17(4): e0265940. [DOI link](https://doi.org/10.1371/journal.pone.0265940)
